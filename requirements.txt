@@ -1,5 +1,4 @@
 flask
 opencv-python-headless
-face_recognition
-pillow
 numpy
+pillow

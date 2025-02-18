@@ -4,23 +4,19 @@ import numpy as np
 import base64
 from PIL import Image
 import io
-import face_recognition
 
 app = Flask(__name__)
 
-# Hàm nhận dạng khuôn mặt
+# Hàm nhận dạng khuôn mặt sử dụng OpenCV
 def detect_faces(image):
-    # Chuyển đổi ảnh sang định dạng RGB
-    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    faces = face_cascade.detectMultiScale(gray, 1.1, 4)
     
-    # Tìm các khuôn mặt trong ảnh
-    face_locations = face_recognition.face_locations(rgb_image)
+    for (x, y, w, h) in faces:
+        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
     
-    # Vẽ hình chữ nhật xung quanh khuôn mặt
-    for (top, right, bottom, left) in face_locations:
-        cv2.rectangle(image, (left, top), (right, bottom), (0, 255, 0), 2)
-    
-    return image, len(face_locations)
+    return image, len(faces)
 
 @app.route('/')
 def index():
